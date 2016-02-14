@@ -101,9 +101,13 @@ namespace FakeViewModels.Core
 
             if (fakeDataAttribute is FakeImageAttribute)
             {
+                string loremPixelBaseUrl = "http://lorempixel.com";
                 FakeImageAttribute fakeImageAttribute = fakeDataAttribute as FakeImageAttribute;
-                string imageUrl = String.Format("http://lorempixel.com/{0}/{1}/{2}", 
-                    fakeImageAttribute.Width ?? 500, fakeImageAttribute.Height ?? 500, fakeImageAttribute.ImageType.ToString().ToLower());
+                int imageWidth = fakeImageAttribute.Width ?? 500;
+                int imageHeight = fakeImageAttribute.Height ?? 500;
+                string imageTypeString = fakeImageAttribute.ImageType.ToString().ToLower();
+                Guid guid = Guid.NewGuid();
+                string imageUrl = $"{loremPixelBaseUrl}/{imageWidth}/{imageHeight}/{imageTypeString}?ignore={guid}";
 
                 propertyInfo.SetValue(instance, imageUrl);
             }

@@ -2,7 +2,7 @@
 {
     public enum FakeImageType
     {
-        Cats,
+        Cats, // default
         City,
         People
     }
@@ -11,7 +11,7 @@
     {
         public int? Height { get; private set; }
 
-        public FakeImageType? ImageType { get; private set; }
+        public FakeImageType ImageType { get; private set; }
 
         public int? Width { get; private set; }
 

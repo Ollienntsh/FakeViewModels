@@ -18,7 +18,7 @@
             <ListBox ItemsSource="{x:Bind ViewModel.People}">
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="viewModels:Person">
-                        <TextBlock Text="{Binding Name}" />
+                        <Image Source="{Binding ImageUrl}" Stretch="None" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
