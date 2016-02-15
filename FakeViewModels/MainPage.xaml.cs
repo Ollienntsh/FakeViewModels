@@ -5,7 +5,6 @@ namespace FakeViewModels
 {
     public class MainPageBase : PageBase<CompanyViewModel>
     {
-
     }
 
     public sealed partial class MainPage : MainPageBase

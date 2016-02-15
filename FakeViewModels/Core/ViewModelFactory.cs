@@ -34,7 +34,13 @@ namespace FakeViewModels.Core
             return imageUrl;
         }
 
-        private static void SetFakeData(this object instance)
+        private static bool HasDefaultConstructor(this Type type)
+        {
+            bool hasDefaultConstructor = type.GetTypeInfo().IsValueType || (type.GetConstructor(Type.EmptyTypes) != null);
+            return hasDefaultConstructor;
+        }
+
+        private static void SetFakeData(this object instance, int level = 0)
         {
             Type viewModelType = instance.GetType();
 
@@ -60,6 +66,11 @@ namespace FakeViewModels.Core
                     {
                         instance.SetFakeCollectionProperty(propertyInfo);
                     }
+                    else if (propertyType.HasDefaultConstructor() && (level < 2))
+                    {
+                        object innerInstance = Activator.CreateInstance(propertyType);
+                        innerInstance.SetFakeData(level + 1);
+                    }
                 }
             }
         }
@@ -68,11 +79,10 @@ namespace FakeViewModels.Core
         {
             Type propertyType = propertyInfo.PropertyType;
             Type itemType = propertyType.GetGenericArguments().First();
-            ConstructorInfo itemConstructorInfo = itemType.GetConstructor(Type.EmptyTypes);
             MethodInfo addMethodInfo = propertyType.GetMethod(nameof(ICollection<object>.Add));
             int itemCount = propertyInfo.GetCustomAttribute<FakeCollectionAttribute>()?.ItemCount ?? 10;
 
-            if ((itemConstructorInfo != null) && (addMethodInfo != null))
+            if (propertyType.HasDefaultConstructor() && itemType.HasDefaultConstructor() && (addMethodInfo != null))
             {
                 object collection = Activator.CreateInstance(propertyType);
 

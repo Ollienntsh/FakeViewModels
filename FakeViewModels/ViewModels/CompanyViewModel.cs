@@ -16,10 +16,17 @@ namespace FakeViewModels.ViewModels
         public string ImageUrl { get; set; }
     }
 
+    public class ComplexObject
+    {
+        public Person Person { get; set; }
+    }
+
     public class CompanyViewModel : IViewModel
     {
         [FakeName("Microsoft")]
         public string CompanyName { get; set; }
+
+        public ComplexObject ComplexObject { get; set; }
 
         [FakeName]
         public string PhoneNumber { get; set; }
@@ -29,7 +36,7 @@ namespace FakeViewModels.ViewModels
         [FakeDate(FakeDateType.Birthday)]
         public DateTime Birthday { get; set; }
 
-        [FakeImage(200,200, FakeImageType.City)]
+        [FakeImage(200,200, FakeImageType.Cats)]
         public string ImageUrl { get; set; }
 
         [FakeCollection(5)]

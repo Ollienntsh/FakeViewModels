@@ -10,19 +10,25 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel Margin="10">
-            <TextBlock Text="{x:Bind ViewModel.CompanyName, Mode=OneWay}" />
-            <TextBlock Text="{x:Bind ViewModel.PhoneNumber, Mode=OneWay}" />
-            <TextBlock Text="{x:Bind ViewModel.Birthday, Mode=OneWay}" />
+            <StackPanel Margin="20,0,0,0">
+                <TextBlock Text="{x:Bind ViewModel.CompanyName, Mode=OneWay}" FontWeight="Bold" />
+                <TextBlock Text="{x:Bind ViewModel.PhoneNumber, Mode=OneWay}" />
+                <TextBlock Text="{x:Bind ViewModel.Birthday, Mode=OneWay}" />
+            </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Image Source="{x:Bind ViewModel.ImageUrl}" Stretch="None" Margin="20"/>
+                <Image Source="{x:Bind ViewModel.ImageUrl}" Stretch="None" Margin="20" />
                 <TextBlock Text="{x:Bind ViewModel.Description}" Margin="20" Width="980" TextWrapping="Wrap" />
             </StackPanel>
-            <ListBox ItemsSource="{x:Bind ViewModel.People}" Margin="20" Background="White">
+            <ListBox ItemsSource="{x:Bind ViewModel.People}" Margin="10" Background="White">
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="viewModels:Person">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding ImageUrl}" Stretch="None" />
-                            <TextBlock Text="{Binding Name}" Margin="20,0,0,0" />
+                            <Ellipse Width="50" Height="50">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="{x:Bind ImageUrl}" />
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <TextBlock Text="{x:Bind Name}" Margin="20,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
