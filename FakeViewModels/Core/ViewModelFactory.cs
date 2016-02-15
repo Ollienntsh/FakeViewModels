@@ -40,6 +40,16 @@ namespace FakeViewModels.Core
             return hasDefaultConstructor;
         }
 
+        private static bool IsGenericCollectionType(this Type type)
+        {
+            Type genericCollectionType = (from interfaceType in type.GetInterfaces()
+                                          where interfaceType.GetTypeInfo().IsGenericType && (interfaceType.GetGenericTypeDefinition() == typeof(ICollection<>))
+                                          select interfaceType).FirstOrDefault();
+            bool isGenericCollectionType = genericCollectionType != null;
+
+            return isGenericCollectionType;
+        }
+
         private static void SetFakeData(this object instance, int level = 0)
         {
             Type viewModelType = instance.GetType();
@@ -47,30 +57,24 @@ namespace FakeViewModels.Core
             foreach (PropertyInfo propertyInfo in viewModelType.GetProperties())
             {
                 Type propertyType = propertyInfo.PropertyType;
+                TypeInfo propertyTypeInfo = propertyInfo.PropertyType.GetTypeInfo();
 
                 if (propertyType == typeof(string))
                 {
                     instance.SetFakeStringProperty(propertyInfo);
                 }
-                else if (propertyType == typeof(DateTime))
+                else if (propertyTypeInfo.IsValueType)
                 {
-                    instance.SetFakeDateProperty(propertyInfo);
+                    instance.SetFakeValueProperty(propertyInfo);
                 }
-                else
+                else if (propertyType.IsGenericCollectionType())
                 {
-                    Type genericCollectionType = (from interfaceType in propertyType.GetInterfaces()
-                                                  where interfaceType.GetTypeInfo().IsGenericType && (interfaceType.GetGenericTypeDefinition() == typeof(ICollection<>))
-                                                  select interfaceType).FirstOrDefault();
-
-                    if (genericCollectionType != null)
-                    {
-                        instance.SetFakeCollectionProperty(propertyInfo);
-                    }
-                    else if (propertyType.HasDefaultConstructor() && (level < 2))
-                    {
-                        object innerInstance = Activator.CreateInstance(propertyType);
-                        innerInstance.SetFakeData(level + 1);
-                    }
+                    instance.SetFakeCollectionProperty(propertyInfo);
+                }
+                else if (propertyType.HasDefaultConstructor() && (level < 2))
+                {
+                    object innerInstance = Activator.CreateInstance(propertyType);
+                    innerInstance.SetFakeData(level + 1);
                 }
             }
         }
@@ -149,6 +153,20 @@ namespace FakeViewModels.Core
                 propertyInfo.SetValue(instance, String.Join(Environment.NewLine, Faker.Lorem.Paragraphs(5)));
             }
         } 
+
+        public static void SetFakeValueProperty(this object instance, PropertyInfo propertyInfo)
+        {
+            Type propertyType = propertyInfo.PropertyType;
+
+            if (propertyType == typeof(decimal))
+            {
+                propertyInfo.SetValue(instance, (decimal)Faker.RandomNumber.NextDouble());
+            }
+            else if (propertyType == typeof(DateTime))
+            {
+                instance.SetFakeDateProperty(propertyInfo);
+            }
+        }
 
         #endregion
     }

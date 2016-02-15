@@ -19,6 +19,7 @@ namespace FakeViewModels.ViewModels
     public class ComplexObject
     {
         public Person Person { get; set; }
+        public decimal Salary { get; set; }
     }
 
     public class CompanyViewModel : IViewModel
