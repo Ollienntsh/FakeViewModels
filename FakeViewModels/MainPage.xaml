@@ -12,9 +12,11 @@
         <StackPanel Margin="10">
             <TextBlock Text="{x:Bind ViewModel.CompanyName, Mode=OneWay}" />
             <TextBlock Text="{x:Bind ViewModel.PhoneNumber, Mode=OneWay}" />
-            <TextBlock Text="{x:Bind ViewModel.Description, Mode=OneWay}" />
             <TextBlock Text="{x:Bind ViewModel.Birthday, Mode=OneWay}" />
-            <Image Source="{x:Bind ViewModel.ImageUrl}" Stretch="None" Margin="0,20,0,0 "/>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{x:Bind ViewModel.ImageUrl}" Stretch="None" Margin="20"/>
+                <TextBlock Text="{x:Bind ViewModel.Description}" Margin="20" Width="980" TextWrapping="Wrap" />
+            </StackPanel>
             <ListBox ItemsSource="{x:Bind ViewModel.People}" Margin="20" Background="White">
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="viewModels:Person">

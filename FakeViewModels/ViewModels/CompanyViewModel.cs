@@ -24,7 +24,6 @@ namespace FakeViewModels.ViewModels
         [FakeName]
         public string PhoneNumber { get; set; }
 
-        [FakeName]
         public string Description { get; set; }
 
         [FakeDate(FakeDateType.Birthday)]

@@ -136,7 +136,7 @@ namespace FakeViewModels.Core
             }
             else
             {
-                propertyInfo.SetValue(instance, Faker.Lorem.Sentence());
+                propertyInfo.SetValue(instance, String.Join(Environment.NewLine, Faker.Lorem.Paragraphs(5)));
             }
         } 
 
