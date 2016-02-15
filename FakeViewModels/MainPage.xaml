@@ -9,16 +9,19 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel>
+        <StackPanel Margin="10">
             <TextBlock Text="{x:Bind ViewModel.CompanyName, Mode=OneWay}" />
             <TextBlock Text="{x:Bind ViewModel.PhoneNumber, Mode=OneWay}" />
             <TextBlock Text="{x:Bind ViewModel.Description, Mode=OneWay}" />
             <TextBlock Text="{x:Bind ViewModel.Birthday, Mode=OneWay}" />
             <Image Source="{x:Bind ViewModel.ImageUrl}" Stretch="None" Margin="0,20,0,0 "/>
-            <ListBox ItemsSource="{x:Bind ViewModel.People}">
+            <ListBox ItemsSource="{x:Bind ViewModel.People}" Margin="20" Background="White">
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="viewModels:Person">
-                        <Image Source="{Binding ImageUrl}" Stretch="None" />
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding ImageUrl}" Stretch="None" />
+                            <TextBlock Text="{Binding Name}" Margin="20,0,0,0" />
+                        </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

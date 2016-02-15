@@ -8,11 +8,30 @@ namespace FakeViewModels.Core
 {
     public static class ViewModelFactory
     {
+        #region public methods
+
         public static T CreateFakeViewModel<T>() where T : IViewModel, new()
         {
             T fakeViewModel = new T();
             fakeViewModel.SetFakeData();
             return fakeViewModel;
+        }
+
+        #endregion
+
+        #region non-public methods
+
+        private static string CreateLoremPixelUrl(FakeDataAttribute fakeDataAttribute)
+        {
+            Guid guid = Guid.NewGuid();
+            FakeImageAttribute fakeImageAttribute = fakeDataAttribute as FakeImageAttribute;
+            int imageWidth = fakeImageAttribute.Width ?? 500;
+            int imageHeight = fakeImageAttribute.Height ?? 500;
+            string loremPixelBaseUrl = "http://lorempixel.com";
+            string imageTypeString = fakeImageAttribute.ImageType.ToString().ToLower();
+            string imageUrl = $"{loremPixelBaseUrl}/{imageWidth}/{imageHeight}/{imageTypeString}?ignore={guid}";
+
+            return imageUrl;
         }
 
         private static void SetFakeData(this object instance)
@@ -33,32 +52,38 @@ namespace FakeViewModels.Core
                 }
                 else
                 {
-                    Type genericCollectionType = propertyType.GetInterfaces()
-                                                             .Where(interfaceType => interfaceType.GetTypeInfo().IsGenericType)
-                                                             .FirstOrDefault(interfaceType => (interfaceType.GetGenericTypeDefinition() == typeof(ICollection<>)));
+                    Type genericCollectionType = (from interfaceType in propertyType.GetInterfaces()
+                                                  where interfaceType.GetTypeInfo().IsGenericType && (interfaceType.GetGenericTypeDefinition() == typeof(ICollection<>))
+                                                  select interfaceType).FirstOrDefault();
 
                     if (genericCollectionType != null)
                     {
-                        Type itemType = propertyType.GetGenericArguments().First();
-                        ConstructorInfo itemConstructorInfo = itemType.GetConstructor(Type.EmptyTypes);
-                        MethodInfo addMethodInfo = propertyType.GetMethod("Add");
-                        int itemCount = propertyInfo.GetCustomAttribute<FakeCollectionAttribute>()?.ItemCount ?? 10;
-
-                        if ((itemConstructorInfo) != null && (addMethodInfo != null))
-                        {
-                            object collection = Activator.CreateInstance(propertyType);
-
-                            for (int i = 0; i < itemCount; i++)
-                            {
-                                object item = Activator.CreateInstance(itemType);
-                                item.SetFakeData();
-                                addMethodInfo.Invoke(collection, new[] { item });
-                            }
-
-                            propertyInfo.SetValue(instance, collection);
-                        }
+                        instance.SetFakeCollectionProperty(propertyInfo);
                     }
                 }
+            }
+        }
+
+        private static void SetFakeCollectionProperty(this object instance, PropertyInfo propertyInfo)
+        {
+            Type propertyType = propertyInfo.PropertyType;
+            Type itemType = propertyType.GetGenericArguments().First();
+            ConstructorInfo itemConstructorInfo = itemType.GetConstructor(Type.EmptyTypes);
+            MethodInfo addMethodInfo = propertyType.GetMethod(nameof(ICollection<object>.Add));
+            int itemCount = propertyInfo.GetCustomAttribute<FakeCollectionAttribute>()?.ItemCount ?? 10;
+
+            if ((itemConstructorInfo != null) && (addMethodInfo != null))
+            {
+                object collection = Activator.CreateInstance(propertyType);
+
+                for (int i = 0; i < itemCount; i++)
+                {
+                    object item = Activator.CreateInstance(itemType);
+                    item.SetFakeData();
+                    addMethodInfo.Invoke(collection, new[] { item });
+                }
+
+                propertyInfo.SetValue(instance, collection);
             }
         }
 
@@ -101,14 +126,7 @@ namespace FakeViewModels.Core
 
             if (fakeDataAttribute is FakeImageAttribute)
             {
-                string loremPixelBaseUrl = "http://lorempixel.com";
-                FakeImageAttribute fakeImageAttribute = fakeDataAttribute as FakeImageAttribute;
-                int imageWidth = fakeImageAttribute.Width ?? 500;
-                int imageHeight = fakeImageAttribute.Height ?? 500;
-                string imageTypeString = fakeImageAttribute.ImageType.ToString().ToLower();
-                Guid guid = Guid.NewGuid();
-                string imageUrl = $"{loremPixelBaseUrl}/{imageWidth}/{imageHeight}/{imageTypeString}?ignore={guid}";
-
+                string imageUrl = CreateLoremPixelUrl(fakeDataAttribute);
                 propertyInfo.SetValue(instance, imageUrl);
             }
             else if (fakeDataAttribute is FakeNameAttribute)
@@ -120,6 +138,8 @@ namespace FakeViewModels.Core
             {
                 propertyInfo.SetValue(instance, Faker.Lorem.Sentence());
             }
-        }
+        } 
+
+        #endregion
     }
 }

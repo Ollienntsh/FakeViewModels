@@ -33,7 +33,7 @@ namespace FakeViewModels.ViewModels
         [FakeImage(200,200, FakeImageType.City)]
         public string ImageUrl { get; set; }
 
-        [FakeCollection(3)]
+        [FakeCollection(5)]
         public ObservableCollection<Person> People { get; set; }
         
         public event PropertyChangedEventHandler PropertyChanged;
