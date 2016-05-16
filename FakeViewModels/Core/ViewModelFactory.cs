@@ -23,14 +23,25 @@ namespace FakeViewModels.Core
 
         private static string CreateLoremPixelUrl(FakeDataAttribute fakeDataAttribute)
         {
-            Guid guid = Guid.NewGuid();
             FakeImageAttribute fakeImageAttribute = fakeDataAttribute as FakeImageAttribute;
-            int imageWidth = fakeImageAttribute.Width ?? 500;
-            int imageHeight = fakeImageAttribute.Height ?? 500;
-            string loremPixelBaseUrl = "http://lorempixel.com";
-            string imageTypeString = fakeImageAttribute.ImageType.ToString().ToLower();
-            string imageUrl = $"{loremPixelBaseUrl}/{imageWidth}/{imageHeight}/{imageTypeString}?ignore={guid}";
+            string imageUrl = null;
 
+            if (fakeDataAttribute != null)
+            {
+                int imageWidth = fakeImageAttribute.Width ?? 500;
+                int imageHeight = fakeImageAttribute.Height ?? 500;
+                imageUrl = GetLoremPixelImageUrl(fakeImageAttribute.ImageType, imageWidth, imageHeight);
+            }
+
+            return imageUrl;
+        }
+
+        private static string GetLoremPixelImageUrl(FakeImageType fakeImageType, int imageWidth, int imageHeight)
+        {
+            Guid guid = Guid.NewGuid();
+            string loremPixelBaseUrl = "http://lorempixel.com";
+            string imageTypeString = fakeImageType.ToString().ToLower();
+            string imageUrl = $"{loremPixelBaseUrl}/{imageWidth}/{imageHeight}/{imageTypeString}?ignore={guid}";
             return imageUrl;
         }
 

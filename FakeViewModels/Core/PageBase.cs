@@ -4,9 +4,15 @@ using Windows.ApplicationModel;
 
 namespace FakeViewModels.Core
 {
-    public class PageBase<T> : Page, IPage<T> where T : IViewModel, new()
+    public abstract class PageBase<T> : Page, IPage<T> where T : IViewModel, new()
     {
+        #region properties
+
         public T ViewModel { get; set; }
+
+        #endregion
+
+        #region constructors
 
         public PageBase()
         {
@@ -15,6 +21,8 @@ namespace FakeViewModels.Core
                 this.ViewModel = ViewModelFactory.CreateFakeViewModel<T>();
                 this.DataContext = this;
             }
-        }
+        } 
+
+        #endregion
     }
 }
